@@ -1,5 +1,7 @@
+using LinearAlgebra
+
 function powerIteration(matrix::Array{Float64, 2}, size::Int64)
-    eigenVector = ones(size) / sqrt(size)
+    eigenVector = ones(size)
 
     difference::Float64 = 0.001
     lastEigenValue::Float64 = 0
@@ -27,5 +29,7 @@ function powerIteration(matrix::Array{Float64, 2}, size::Int64)
 end
 
 A = [2.0 1.0; 1.0 2.0]
+B = [5.0 3.0; 3.0 5.0]
+C = [1.0 2.0 3.0; 2.0 4.0 2.0; 3.0 2.0 5.0]
 
-powerIteration(A, 2)
+powerIteration(C, 3)
