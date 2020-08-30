@@ -1,8 +1,6 @@
-module QR_Computation
+include("./verifyEigenvalues.jl")
 
 using LinearAlgebra
-
-include("./verifyEigenvalues.jl")
 
 function computeQR(matrix::Matrix{Float64}, matrixDimension::Int64)
     R = zeros(Float64, matrixDimension, matrixDimension)
@@ -20,6 +18,10 @@ function computeQR(matrix::Matrix{Float64}, matrixDimension::Int64)
 
     return (Q, R)
 end
+# Verification of computeQR
+# A = [1.0 9.0 3.0; 2.0 4.0 2.0; 22.0 2.0 5.0]
+# (Q, R) = computeQR(A, 3)
+# println(Q*R) # should be the same as entry matrix
 
 function getEigenvalues(matrix::Matrix{Float64})
     matrixDimension = size(matrix, 2)
@@ -29,20 +31,25 @@ function getEigenvalues(matrix::Matrix{Float64})
 
     identityMatrix = Matrix{Float64}(I, matrixDimension, matrixDimension)
 
+    P = 1
+
     for i = 1:100
-        (Q, R) = computeQR(An - identityMatrix, matrixDimension)
+        (Q, R) = computeQR(An - identityMatrix * α, matrixDimension)
+        P = P * Q
         An = R * Q + identityMatrix * α
     end
 
-    return diag(An)
+    return (diag(An), P)
 end
 
-A = [1.0 9.0 3.0; 2.0 4.0 2.0; 22.0 2.0 5.0]
+A = [2.0 3.0 5.0; 3.0 8.0 1.0; 5.0 1.0 3.0]
 
-result = getEigenvalues(A)
+(eigenvalues, eigenvectors) = getEigenvalues(A)
 
-println(result)
+println(eigenvalues)
 
-Main.verifying.verifyEigenvalues(A, result)
+verifyEigenvalues(A, eigenvalues)
 
-end
+println([eigenvectors[:, i] for i in 1:size(A, 2)])
+
+verifyEigenvectors(A, [eigenvectors[:, i] for i in 1:size(A, 2)])
