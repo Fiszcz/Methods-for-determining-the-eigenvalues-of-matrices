@@ -3,7 +3,7 @@ include("../qr_method/qrMethod.jl")
 using LinearAlgebra
 
 function eigenvalues_from_LinearAlgebra(entryMatrix)
-    printstyled("Computed values by LinearAlgebra package:\n", color=:(green))
+    printstyled("Computed values by LinearAlgebra package:\n", color = :(green))
     (values, vectors) = eigen(entryMatrix)
     println("Eigenvalues: ", values)
     println("Eigenvectors: ")
@@ -13,7 +13,7 @@ end
 function test_results_of_power_method(entryMatrix)
     (eigenValue, eigenVector) = powerMethod(entryMatrix)
 
-    printstyled("POWER METHOD:\n", color=:(green))
+    printstyled("POWER METHOD:\n", color = :(green))
 
     println("Computed values:")
     println("Eigenvalue: ", eigenValue)
@@ -24,7 +24,7 @@ end
 function test_results_of_qr_method(entryMatrix)
     (eigenValues, eigenVectors) = qrMethod(entryMatrix)
 
-    printstyled("QR METHOD\n", color=:(green))
+    printstyled("QR METHOD\n", color = :(green))
 
     println("Computed values:")
     println("Eigenvalues: ", eigenValues)
