@@ -1,6 +1,6 @@
 using LinearAlgebra
 
-function powerMethod(matrix::Array{Float64, 2})
+function powerMethod(matrix::Array{Float64,2})
     eigenVector = ones(size(matrix, 2))
 
     difference::Float64 = 0.001
@@ -40,12 +40,3 @@ function powerMethodWithDeflation(matrix::Array{Float64, 2})
     end
     return (eigenvalues, eigenvectors)
 end
-
-A = [2.0 1.0; 1.0 2.0]
-B = [5.0 3.0; 3.0 5.0]
-C = [1.0 2.0 3.0; 2.0 4.0 2.0; 3.0 2.0 5.0]
-
-powerMethod(C)
-
-display(eigen(C))
-display(powerMethodWithDeflation(C))
