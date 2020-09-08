@@ -13,10 +13,10 @@ function powerMethod(matrix::Array{Float64, 2})
         eigenVector = normalize(matrix * eigenVector)
 
         transposed = eigenVector'
-        avalorNumerador = (transposed * matrix * eigenVector)
-        avalorDenominador = (transposed * eigenVector)
+        numeratorValue = (transposed * matrix * eigenVector)
+        denominatorValue = (transposed * eigenVector)
 
-        newEigenValue = avalorNumerador / avalorDenominador
+        newEigenValue = numeratorValue / denominatorValue
 
         if (abs(newEigenValue - lastEigenValue) <= difference)
             break
@@ -26,8 +26,26 @@ function powerMethod(matrix::Array{Float64, 2})
     return (newEigenValue, eigenVector)
 end
 
+function powerMethodWithDeflation(matrix::Array{Float64, 2})
+    matrixDimension = size(matrix, 2)
+    eigenvalues = Vector{Float64}()
+    eigenvectors = []
+    for i = 1:matrixDimension
+        (newEigenvalue, newEigenvector) = powerMethod(matrix)
+        append!(eigenvalues, newEigenvalue)
+        append!(eigenvectors, [newEigenvector])
+        if i != matrixDimension
+            matrix = matrix - newEigenvalue*newEigenvector*newEigenvector'
+        end
+    end
+    return (eigenvalues, eigenvectors)
+end
+
 A = [2.0 1.0; 1.0 2.0]
 B = [5.0 3.0; 3.0 5.0]
 C = [1.0 2.0 3.0; 2.0 4.0 2.0; 3.0 2.0 5.0]
 
-powerIteration(C, 3)
+powerMethod(C)
+
+display(eigen(C))
+display(powerMethodWithDeflation(C))
