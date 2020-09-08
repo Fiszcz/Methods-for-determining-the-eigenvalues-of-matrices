@@ -17,7 +17,7 @@ function computeQR(matrix::Array{Float64,2}, matrixDimension::Int64)
     return (Q, R)
 end
 
-function qrMethod(matrix::Array{Float64,2})
+function qrMethod(matrix::Symmetric{Float64,Array{Float64,2}})
     matrixDimension = size(matrix, 2)
 
     An = matrix
