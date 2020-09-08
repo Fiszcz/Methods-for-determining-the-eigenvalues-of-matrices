@@ -6,10 +6,10 @@ using Pkg
 Pkg.add("BenchmarkTools")
 using BenchmarkTools
 
-matrix1 = Symmetric(rand(5, 5) * 100)
-matrix2 = Symmetric(rand(25, 25) * 100)
-matrix3 = Symmetric(rand(75, 75) * 100)
-matrix4 = Symmetric(rand(150, 150) * 100)
+matrix1 = Array(Symmetric(rand(5, 5) * 100))
+matrix2 = Array(Symmetric(rand(25, 25) * 100))
+matrix3 = Array(Symmetric(rand(75, 75) * 100))
+matrix4 = Array(Symmetric(rand(150, 150) * 100))
 
 printstyled("JACOBI METHOD:\n", color = :(green))
 printstyled("Matrix 5x5:\n", color = :(blue))
@@ -38,6 +38,18 @@ display(@benchmark powerMethod(matrix3))
 println()
 printstyled("Matrix 150x150:\n", color = :(blue))
 display(@benchmark powerMethod(matrix4))
+println()
+println()
+
+printstyled("POWER METHOD WITH DEFLATION:\n", color = :(green))
+printstyled("Matrix 5x5:\n", color = :(blue))
+display(@benchmark powerMethodWithDeflation(matrix1))
+printstyled("Matrix 25x25:\n", color = :(blue))
+display(@benchmark powerMethodWithDeflation(matrix2))
+printstyled("Matrix 75x75:\n", color = :(blue))
+display(@benchmark powerMethodWithDeflation(matrix3))
+printstyled("Matrix 150x150:\n", color = :(blue))
+display(@benchmark powerMethodWithDeflation(matrix4))
 println()
 println()
 

@@ -1,23 +1,44 @@
 using LinearAlgebra
 
-function computeQR(matrix::Array{Float64,2}, matrixDimension::Int64)
-    R = zeros(Float64, matrixDimension, matrixDimension)
-    Q = copy(R)
+function compute_Q(W, matrixDimension)
+    Z = I
+    for j = matrixDimension:-1:1
+        Z = Z - W[:,j]*(W[:,j]'*Z)
+    end
+    return Z
+end
+
+sqrt_2 = sqrt(2)
+function householder_reflection(x)
+    nw = norm(x)
+    if nw != 0
+        w = x/nw
+        w[1] = w[1] + (w[1] == 0 ? 1 : sign(w[1]))
+        w = w/sqrt(abs(w[1]))
+    else
+        w = x
+        w[1] = sqrt_2
+    end
+
+    return w
+end
+
+function householderQR(matrix::Array{Float64,2}, matrixDimension::Int64)
+    W = zeros(Float64, matrixDimension, matrixDimension)
+    R = copy(matrix)
 
     for j = 1:matrixDimension
-        v = matrix[:,j]
-        for i = 1:j-1
-            R[i, j] = Q[:,i]'*v
-            v = v - R[i,j]*Q[:,i]
-        end
-        R[j,j] = norm(v)
-        Q[:,j] = v / R[j,j]
+        w = householder_reflection(R[j:matrixDimension, j])
+        W[j:matrixDimension, j] = w
+        R[j:matrixDimension, j:matrixDimension] = R[j:matrixDimension, j:matrixDimension] - w*(w'*R[j:matrixDimension, j:matrixDimension])
+        R[j+1:matrixDimension, j] .= 0
     end
+    Q = compute_Q(W, matrixDimension)
 
     return (Q, R)
 end
 
-function qrMethod(matrix::Symmetric{Float64,Array{Float64,2}})
+function qrMethod(matrix::Array{Float64,2})
     matrixDimension = size(matrix, 2)
 
     An = matrix
@@ -28,7 +49,7 @@ function qrMethod(matrix::Symmetric{Float64,Array{Float64,2}})
     P = 1
 
     for i = 1:100
-        (Q, R) = computeQR(An - identityMatrix * α, matrixDimension)
+        (Q, R) = householderQR(An - identityMatrix * α, matrixDimension)
         P = P * Q
         An = R * Q + identityMatrix * α
     end

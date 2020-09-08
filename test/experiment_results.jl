@@ -27,14 +27,14 @@ function test_results_of_jacobi_method(entryMatrix)
 end
 
 function test_results_of_power_method(entryMatrix)
-    (eigenValue, eigenVector) = powerMethod(entryMatrix)
+    (eigenValues, eigenVectors) = powerMethodWithDeflation(entryMatrix)
 
-    printstyled("POWER METHOD:\n", color = :(green))
+    printstyled("POWER METHOD WITH DEFLATION:\n", color = :(green))
 
     println("Computed values:")
-    println("Eigenvalue: ", eigenValue)
+    println("Eigenvalue: ", eigenValues)
     println("Eigenvector: ")
-    display(eigenVector)
+    display(eigenVectors)
     println()
 end
 
@@ -51,7 +51,7 @@ function test_results_of_qr_method(entryMatrix)
     println()
 end
 
-entryMatrix = Symmetric(rand(5, 5))
+entryMatrix = Array(Symmetric(rand(3, 3)))
 
 eigenvalues_from_LinearAlgebra(entryMatrix)
 test_results_of_jacobi_method(entryMatrix)
