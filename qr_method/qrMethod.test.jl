@@ -1,22 +1,25 @@
 include("../utils/verifyEigenvalues.jl")
-include("./qrMethod0.jl")
+include("./qrMethod.jl")
 using LinearAlgebra
+using BenchmarkTools
+import Random
 
 # Verification of computeQR
-A = [1.0 9.0 3.0; 2.0 4.0 2.0; 22.0 2.0 5.0]
+B = [1.0 9.0 3.0; 2.0 4.0 2.0; 22.0 2.0 5.0]
 
-(Q, R) = householderQR(A, 3)
+(Q, R) = householderQR(B, 3)
 
 println(Q*R) # should be the same as entry matrix
 
-B = [2.0 3.0 5.0; 3.0 8.0 1.0; 5.0 1.0 3.0]
+Random.seed!(100)
+A = Array(Symmetric(rand(5, 5) * 100))
 
-display(eigen(B))
+(eigenvalues, eigenvectors) = qrMethod(A)
 
-(eigenvalues, eigenvectors) = qrMethod(B)
+display(eigvals(A))
 
 display(eigenvectors)
 
 println(eigenvalues)
 
-verifyEigenvalues(B, eigenvalues)
+display(@benchmark qrMethod(A))

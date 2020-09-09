@@ -5,12 +5,12 @@ using LinearAlgebra
 
 function eigenvalues_from_LinearAlgebra(entryMatrix)
     printstyled("Computed values by LinearAlgebra package:\n", color = :(green))
+
     (values, vectors) = eigen(entryMatrix)
+
     println("Eigenvalues: ", values)
     println("Eigenvectors: ")
     display(vectors)
-    println()
-    println()
 end
 
 function test_results_of_jacobi_method(entryMatrix)
@@ -22,8 +22,6 @@ function test_results_of_jacobi_method(entryMatrix)
     println("Eigenvalue: ", eigenValue)
     println("Eigenvector: ")
     display(eigenVector)
-    println()
-    println()
 end
 
 function test_results_of_power_method(entryMatrix)
@@ -35,7 +33,6 @@ function test_results_of_power_method(entryMatrix)
     println("Eigenvalue: ", eigenValues)
     println("Eigenvector: ")
     display(eigenVectors)
-    println()
 end
 
 function test_results_of_qr_method(entryMatrix)
@@ -47,13 +44,14 @@ function test_results_of_qr_method(entryMatrix)
     println("Eigenvalues: ", eigenValues)
     println("Eigenvectors: ")
     display(eigenVectors)
-    println()
-    println()
 end
 
-entryMatrix = Array(Symmetric(rand(3, 3)))
+entryMatrix = Array(Symmetric(rand(4, 4)))
 
 eigenvalues_from_LinearAlgebra(entryMatrix)
+println()
 test_results_of_jacobi_method(entryMatrix)
+println()
 test_results_of_power_method(entryMatrix)
+println()
 test_results_of_qr_method(entryMatrix)
