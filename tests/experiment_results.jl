@@ -46,7 +46,7 @@ function test_results_of_qr_method(entryMatrix)
     display(eigenVectors)
 end
 
-entryMatrix = Array(Symmetric(rand(4, 4)))
+const entryMatrix = Array(Symmetric(rand(4, 4)))
 
 eigenvalues_from_LinearAlgebra(entryMatrix)
 println()

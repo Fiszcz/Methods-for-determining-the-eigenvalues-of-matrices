@@ -1,20 +1,20 @@
 using LinearAlgebra
 
 function powerMethod(matrix::Array{Float64,2})
-    eigenVector = ones(size(matrix, 2))
+    eigenvector = ones(size(matrix, 2))
 
     difference::Float64 = 0.001
-    lastEigenValue::Float64 = 0
-    newEigenValue::Float64 = 0
+    lastEigenValue::Float64 = 0.0
+    newEigenValue::Float64 = 0.0
 
     while true
-        eigenVector = normalize(matrix * eigenVector)
+        eigenvector = normalize(matrix * eigenvector)
 
-        transposed = eigenVector'
-        numeratorValue = (transposed * matrix * eigenVector)
-        denominatorValue = (transposed * eigenVector)
+        transposed = eigenvector'
+        numeratorValue = @fastmath (transposed * matrix * eigenvector)
+        denominatorValue = @fastmath (transposed * eigenvector)
 
-        newEigenValue = numeratorValue / denominatorValue
+        newEigenValue = @fastmath numeratorValue / denominatorValue
 
         if (abs(newEigenValue - lastEigenValue) <= difference)
             break
@@ -23,20 +23,20 @@ function powerMethod(matrix::Array{Float64,2})
         lastEigenValue = newEigenValue
     end
 
-    return (newEigenValue, eigenVector)
+    return (newEigenValue, eigenvector)
 end
 
 function powerMethodWithDeflation(matrix::Array{Float64, 2})
     matrixDimension = size(matrix, 2)
 
-    eigenvalues = Vector{Float64}(undef, 5)
+    eigenvalues = Vector{Float64}(undef, matrixDimension)
     eigenvectors = Array{Float64, 2}(undef, matrixDimension, matrixDimension)
-    for i = 1:matrixDimension
+    for i in eachindex(eigenvalues)
         (newEigenvalue, newEigenvector) = powerMethod(matrix)
-        eigenvalues[i] = newEigenvalue
-        eigenvectors[:, i] = newEigenvector
+        @inbounds eigenvalues[i] = newEigenvalue
+        @inbounds eigenvectors[:, i] = newEigenvector
         if i != matrixDimension
-            matrix = matrix - newEigenvalue*newEigenvector*newEigenvector'
+            @fastmath matrix -= newEigenvalue*newEigenvector*newEigenvector'
         end
     end
     return (eigenvalues, eigenvectors)
