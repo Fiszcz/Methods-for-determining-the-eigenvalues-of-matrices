@@ -1,6 +1,6 @@
 using LinearAlgebra
 
-@inline function compute_Q(W::Array{Float64,2}, matrixDimension::Int64)
+function compute_Q(W::Array{Float64,2}, matrixDimension::Int64)
     Z = Array{Float64,2}(I, matrixDimension, matrixDimension)
     @views for column = matrixDimension:-1:1
         Z -= W[:,column]*(W[:,column]'*Z)
@@ -9,7 +9,7 @@ using LinearAlgebra
 end
 
 const sqrt_2 = sqrt(2)
-@inline function householder_reflection(x)
+function householder_reflection(x)
     nw = norm(x)
     if nw != 0
         w = x/nw
@@ -23,7 +23,7 @@ const sqrt_2 = sqrt(2)
     return w
 end
 
-@inline function householderQR(matrix::Array{Float64,2}, matrixDimension::Int64)
+function householderQR(matrix::Array{Float64,2}, matrixDimension::Int64)
     W = zeros(Float64, matrixDimension, matrixDimension)
     R::Array{Float64,2} = copy(matrix)
 
@@ -47,29 +47,15 @@ function qrMethod(matrix::Array{Float64,2})
 
     P = Array{Float64,2}(I, matrixDimension, matrixDimension)
 
-    inProgress = true
-    currently_checked_column = 1
-    currently_checked_row = 2
-    while inProgress
+    previous_diagonal_length::Float64 = 10.0
+    current_diagonal_length_squared::Float64 = eps(Float64)
+    while abs((previous_diagonal_length - current_diagonal_length_squared)/previous_diagonal_length) > 0.001
         (Q, R) = householderQR(matrix - identityMatrix * α, matrixDimension)
         P *= Q
         matrix = R * Q + identityMatrix * α
 
-        inProgress = false
-        for column = currently_checked_column:matrixDimension-1
-            for row = currently_checked_row:matrixDimension
-                if abs(matrix[row, column]) > 0.001
-                    inProgress = true
-                    currently_checked_column = column
-                    currently_checked_row = row
-                    break
-                end
-            end
-            if inProgress
-                break
-            end
-            currently_checked_row = column + 2
-        end
+        previous_diagonal_length = current_diagonal_length_squared
+        current_diagonal_length_squared = sum(diag(matrix).^2)
     end
 
     return (diag(matrix), P)

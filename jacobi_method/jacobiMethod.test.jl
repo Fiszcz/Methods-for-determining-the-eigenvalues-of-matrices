@@ -19,5 +19,5 @@ display(eigenvectors)
 println(eigenvalues)
 
 Random.seed!(100)
-const B = Array(Symmetric(rand(15, 15)))
+const B = Array(Symmetric(rand(75, 75)))
 display(@benchmark jacobiMethod(B))
