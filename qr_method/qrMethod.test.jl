@@ -26,5 +26,5 @@ display(eigenvectors)
 println(eigenvalues)
 
 Random.seed!(100)
-const B = Array(Symmetric(rand(15, 15) * 100))
+const B = Array(Symmetric(rand(75, 75) * 100))
 display(@benchmark qrMethod(B))

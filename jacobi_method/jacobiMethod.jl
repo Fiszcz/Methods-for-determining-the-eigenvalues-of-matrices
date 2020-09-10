@@ -4,11 +4,12 @@ function jacobiMethod(A::Array{Float64,2})
     (n, n) = size(A)
     A_copy = copy(A)
 
-    previous_diagonal_length::Float64 = typemax(Float64)
-    current_diagonal_length_squared::Float64 = 0.0
     eigenvalues = Array{Float64, 1}(undef, n)
     eigenvectors = Array{Float64, 2}(I, n, n)
-    while abs(previous_diagonal_length - current_diagonal_length_squared) > 0.001
+
+    previous_diagonal_length::Float64 = 10.0
+    current_diagonal_length_squared::Float64 = eps(Float64)
+    while abs((previous_diagonal_length - current_diagonal_length_squared)/previous_diagonal_length) > 0.001
         (s, t) = max_element_above_diagonal(A_copy)
         (sint, cost) = get_sin_cos(A_copy, s, t)
         R = Matrix{Float64}(I, n, n)
