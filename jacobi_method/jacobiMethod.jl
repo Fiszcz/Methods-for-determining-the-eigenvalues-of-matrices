@@ -3,10 +3,11 @@ using LinearAlgebra
 function jacobiMethod(A::Array{Float64,2})
     (n, n) = size(A)
     A_copy = copy(A)
-    previous_diagonal_length = typemax(Float64)
-    current_diagonal_length_squared = 0
+
+    previous_diagonal_length::Float64 = typemax(Float64)
+    current_diagonal_length_squared::Float64 = 0.0
     eigenvalues = Array{Float64, 1}(undef, n)
-    eigenvectors = Matrix{Float64}(I, n, n)
+    eigenvectors = Array{Float64, 2}(I, n, n)
     while abs(previous_diagonal_length - current_diagonal_length_squared) > 0.001
         (s, t) = max_element_above_diagonal(A_copy)
         (sint, cost) = get_sin_cos(A_copy, s, t)
@@ -15,31 +16,29 @@ function jacobiMethod(A::Array{Float64,2})
         R[t, t] = cost
         R[s, t] = -sint
         R[t, s] = sint
-        A_copy = transpose(R) * A_copy * R
-        eigenvectors = eigenvectors * R
-        
+        A_copy = R' * A_copy * R
+        eigenvectors *= R
+
         previous_diagonal_length = current_diagonal_length_squared
-        current_diagonal_length_squared = 0
-        for i = 1:n
-            eigenvalues[i] = A_copy[i, i]
-            current_diagonal_length_squared += A_copy[i, i]^2
-        end
+        current_diagonal_length_squared = sum(diag(A_copy).^2)
     end
 
-    return (sort!(eigenvalues), eigenvectors)
+    return (diag(A_copy), eigenvectors)
 end
 
 function max_element_above_diagonal(A::Array{Float64,2})
-    x::Int64 = 1
-    y::Int64 = 2
+    row_with_max::Int64 = 1
+    column_with_max::Int64 = 2
+    max_value = abs(A[1, 2])
     (n, n) = size(A)
-    for c = 2:n, r = 1:c-1
-        if abs(A[r, c]) > abs(A[x, y])
-            x = r
-            y = c
+    for column = 3:n, row = 1:column-1
+        if abs(A[row, column]) > max_value
+            row_with_max = row
+            column_with_max = column
+            max_value = abs(A[row, column])
         end
     end
-    return (x, y)
+    return (row_with_max, column_with_max)
 end
 
 function get_sin_cos(A::Array{Float64,2}, s::Int64, t::Int64)
